@@ -13,13 +13,22 @@ const (
 )
 
 func registerBasket(e *echo.Echo, db *gorm.DB) {
-	e.GET("/basket/:id", func(c echo.Context) error {
+	setUpRetrievalBasketEndpoint(e, db)
+	setUpProductAddingEndpoint(e, db)
+	setUpProductRemovalEndpoint(e, db)
+	setUpPaymentEndpoint(e, db)
+}
+
+func setUpRetrievalBasketEndpoint(e *echo.Echo, db *gorm.DB) *echo.Route {
+	return e.GET("/basket/:id", func(c echo.Context) error {
 		id := c.Param("id")
 		var basket model.Basket
 		db.Preload("Products").Find(&basket, id)
 		return c.JSON(http.StatusOK, basket)
 	})
+}
 
+func setUpProductAddingEndpoint(e *echo.Echo, db *gorm.DB) {
 	e.PUT("/basket/:id/:productId", func(c echo.Context) error {
 		id := c.Param("id")
 		productId := c.Param("productId")
@@ -52,7 +61,9 @@ func registerBasket(e *echo.Echo, db *gorm.DB) {
 
 		return c.NoContent(http.StatusAccepted)
 	})
+}
 
+func setUpProductRemovalEndpoint(e *echo.Echo, db *gorm.DB) {
 	e.DELETE("/basket/:id/:productId", func(c echo.Context) error {
 		id := c.Param("id")
 		productId := c.Param("productId")
@@ -83,7 +94,9 @@ func registerBasket(e *echo.Echo, db *gorm.DB) {
 
 		return c.NoContent(http.StatusAccepted)
 	})
+}
 
+func setUpPaymentEndpoint(e *echo.Echo, db *gorm.DB) {
 	e.POST("/basket/:id/pay", func(c echo.Context) error {
 		id := c.Param("id")
 		parsedId, err := strconv.ParseInt(id, 10, 64)
