@@ -8,6 +8,10 @@ import (
 	"strconv"
 )
 
+const (
+	invalidIdErrorMessage = "Invalid ID"
+)
+
 func registerBasket(e *echo.Echo, db *gorm.DB) {
 	e.GET("/basket/:id", func(c echo.Context) error {
 		id := c.Param("id")
@@ -21,7 +25,7 @@ func registerBasket(e *echo.Echo, db *gorm.DB) {
 		productId := c.Param("productId")
 		parsedId, err := strconv.ParseInt(id, 10, 64)
 		if err != nil {
-			return c.String(http.StatusBadRequest, "Invalid ID")
+			return c.String(http.StatusBadRequest, invalidIdErrorMessage)
 		}
 		parsedProductId, err := strconv.ParseInt(productId, 10, 64)
 		if err != nil {
@@ -54,7 +58,7 @@ func registerBasket(e *echo.Echo, db *gorm.DB) {
 		productId := c.Param("productId")
 		parsedId, err := strconv.ParseInt(id, 10, 64)
 		if err != nil {
-			return c.String(http.StatusBadRequest, "Invalid ID")
+			return c.String(http.StatusBadRequest, invalidIdErrorMessage)
 		}
 		parsedProductId, err := strconv.ParseInt(productId, 10, 64)
 		if err != nil {
@@ -84,7 +88,7 @@ func registerBasket(e *echo.Echo, db *gorm.DB) {
 		id := c.Param("id")
 		parsedId, err := strconv.ParseInt(id, 10, 64)
 		if err != nil {
-			return c.String(http.StatusBadRequest, "Invalid ID")
+			return c.String(http.StatusBadRequest, invalidIdErrorMessage)
 		}
 
 		var basket model.Basket
