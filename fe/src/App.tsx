@@ -1,8 +1,7 @@
 import React, {createContext, type FC} from 'react'
 import './App.css'
-import {Link as RouterLink, BrowserRouter} from 'react-router-dom'
 import paths from "./Routing/paths";
-import { Route, Routes } from 'react-router-dom';
+import {Route, Routes, Link as RouterLink, BrowserRouter} from 'react-router-dom';
 import {Link} from "@mui/material";
 import Home from "./pages/Home/Home";
 import Cart from "./pages/Cart/Cart";
