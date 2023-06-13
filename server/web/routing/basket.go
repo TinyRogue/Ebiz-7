@@ -9,27 +9,28 @@ import (
 )
 
 const (
+	basketEndpoint        = "/basket/:id"
 	invalidIdErrorMessage = "Invalid ID"
 )
 
 func registerBasket(e *echo.Echo, db *gorm.DB) {
-	setUpRetrievalBasketEndpoint(e, db)
-	setUpProductAddingEndpoint(e, db)
-	setUpProductRemovalEndpoint(e, db)
-	setUpPaymentEndpoint(e, db)
+	e.GET(basketEndpoint, getBasketHandler(db))
+	e.PUT(basketEndpoint+"/:productId", addProductHandler(db))
+	e.DELETE(basketEndpoint+"/:productId", removeProductHandler(db))
+	e.POST(basketEndpoint+"/pay", payHandler(db))
 }
 
-func setUpRetrievalBasketEndpoint(e *echo.Echo, db *gorm.DB) *echo.Route {
-	return e.GET("/basket/:id", func(c echo.Context) error {
+func getBasketHandler(db *gorm.DB) echo.HandlerFunc {
+	return func(c echo.Context) error {
 		id := c.Param("id")
 		var basket model.Basket
 		db.Preload("Products").Find(&basket, id)
 		return c.JSON(http.StatusOK, basket)
-	})
+	}
 }
 
-func setUpProductAddingEndpoint(e *echo.Echo, db *gorm.DB) {
-	e.PUT("/basket/:id/:productId", func(c echo.Context) error {
+func addProductHandler(db *gorm.DB) echo.HandlerFunc {
+	return func(c echo.Context) error {
 		id := c.Param("id")
 		productId := c.Param("productId")
 		parsedId, err := strconv.ParseInt(id, 10, 64)
@@ -60,11 +61,11 @@ func setUpProductAddingEndpoint(e *echo.Echo, db *gorm.DB) {
 		}
 
 		return c.NoContent(http.StatusAccepted)
-	})
+	}
 }
 
-func setUpProductRemovalEndpoint(e *echo.Echo, db *gorm.DB) {
-	e.DELETE("/basket/:id/:productId", func(c echo.Context) error {
+func removeProductHandler(db *gorm.DB) echo.HandlerFunc {
+	return func(c echo.Context) error {
 		id := c.Param("id")
 		productId := c.Param("productId")
 		parsedId, err := strconv.ParseInt(id, 10, 64)
@@ -93,11 +94,11 @@ func setUpProductRemovalEndpoint(e *echo.Echo, db *gorm.DB) {
 		}
 
 		return c.NoContent(http.StatusAccepted)
-	})
+	}
 }
 
-func setUpPaymentEndpoint(e *echo.Echo, db *gorm.DB) {
-	e.POST("/basket/:id/pay", func(c echo.Context) error {
+func payHandler(db *gorm.DB) echo.HandlerFunc {
+	return func(c echo.Context) error {
 		id := c.Param("id")
 		parsedId, err := strconv.ParseInt(id, 10, 64)
 		if err != nil {
@@ -115,5 +116,5 @@ func setUpPaymentEndpoint(e *echo.Echo, db *gorm.DB) {
 		}
 
 		return c.NoContent(http.StatusAccepted)
-	})
+	}
 }
