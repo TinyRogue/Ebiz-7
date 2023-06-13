@@ -8,8 +8,12 @@ import (
 	"net/http"
 )
 
+const (
+	productsEndpoint = "/products"
+)
+
 func registerProducts(e *echo.Echo, db *gorm.DB) {
-	e.GET("/products", func(c echo.Context) error {
+	e.GET(productsEndpoint, func(c echo.Context) error {
 		var products []model.Product
 		if err := db.Preload("Category").Find(&products).Error; err != nil {
 			return c.String(http.StatusInternalServerError, err.Error())
@@ -17,7 +21,7 @@ func registerProducts(e *echo.Echo, db *gorm.DB) {
 		return c.JSON(http.StatusOK, products)
 	})
 
-	e.GET("/products/:id", func(c echo.Context) error {
+	e.GET(productsEndpoint+"/:id", func(c echo.Context) error {
 		id := c.Param("id")
 		var product model.Product
 		result := db.Preload("Category").First(&product, id)
@@ -27,7 +31,7 @@ func registerProducts(e *echo.Echo, db *gorm.DB) {
 		return c.JSON(http.StatusOK, product)
 	})
 
-	e.POST("/products", func(c echo.Context) error {
+	e.POST(productsEndpoint, func(c echo.Context) error {
 		var product model.Product
 		if err := json.NewDecoder(c.Request().Body).Decode(&product); err != nil {
 			return err
@@ -36,7 +40,7 @@ func registerProducts(e *echo.Echo, db *gorm.DB) {
 		return c.NoContent(http.StatusCreated)
 	})
 
-	e.PUT("/products/:id", func(c echo.Context) error {
+	e.PUT(productsEndpoint+"/:id", func(c echo.Context) error {
 		id := c.Param("id")
 		var product model.Product
 		if err := json.NewDecoder(c.Request().Body).Decode(&product); err != nil {
@@ -49,7 +53,7 @@ func registerProducts(e *echo.Echo, db *gorm.DB) {
 		return c.NoContent(http.StatusAccepted)
 	})
 
-	e.DELETE("/products/:id", func(c echo.Context) error {
+	e.DELETE(productsEndpoint+"/:id", func(c echo.Context) error {
 		id := c.Param("id")
 		result := db.Delete(&model.Product{}, id)
 		if result.RowsAffected == 0 {

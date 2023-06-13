@@ -8,7 +8,11 @@ import (
 	"net/http"
 )
 
-const categoriesEndpoint = "/categories"
+const (
+	categoriesEndpoint = "/categories"
+
+	categoryNotFoundErrorMessage = "Category not found"
+)
 
 func registerCategories(e *echo.Echo, db *gorm.DB) {
 	e.GET(categoriesEndpoint, func(c echo.Context) error {
@@ -22,7 +26,7 @@ func registerCategories(e *echo.Echo, db *gorm.DB) {
 		var category model.Category
 		result := db.First(&category, id)
 		if result.Error != nil {
-			return c.String(http.StatusNotFound, "Category not found")
+			return c.String(http.StatusNotFound, categoryNotFoundErrorMessage)
 		}
 		return c.JSON(http.StatusOK, category)
 	})
@@ -44,7 +48,7 @@ func registerCategories(e *echo.Echo, db *gorm.DB) {
 		}
 		result := db.Model(&category).Where("id = ?", id).Updates(category)
 		if result.Error != nil {
-			return c.String(http.StatusNotFound, "Category not found")
+			return c.String(http.StatusNotFound, categoryNotFoundErrorMessage)
 		}
 		return c.NoContent(http.StatusAccepted)
 	})
@@ -53,7 +57,7 @@ func registerCategories(e *echo.Echo, db *gorm.DB) {
 		id := c.Param("id")
 		result := db.Delete(&model.Category{}, id)
 		if result.RowsAffected == 0 {
-			return c.String(http.StatusNotFound, "Category not found")
+			return c.String(http.StatusNotFound, categoryNotFoundErrorMessage)
 		}
 		return c.NoContent(http.StatusAccepted)
 	})
