@@ -52,11 +52,6 @@ describe('API Products Testing', () => {
       "price": 20.05,
     }
 
-    const updatedExpectedBody = {
-      ...requestBody,
-      ...updatedRequestBody,
-    }
-
     cy.request('PUT', 'http://localhost:8080/products/2', requestBody)
       .should((response) => {
         expect(response.status).to.eq(202)
