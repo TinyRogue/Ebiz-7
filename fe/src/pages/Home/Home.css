@@ -1,0 +1,19 @@
+.root {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+
+.Product {
+    padding: 16px 32px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0 3px 8px;
+    background: #E5E9F0;
+    width: 200px;
+    word-break: break-word;
+}
+
+.Product button {
+    margin-top: auto;
+}
+
