@@ -10,6 +10,8 @@ import (
 
 const (
 	productsEndpoint = "/products"
+
+	productNotFoundErrorMessage = "Product not found"
 )
 
 func registerProducts(e *echo.Echo, db *gorm.DB) {
@@ -26,7 +28,7 @@ func registerProducts(e *echo.Echo, db *gorm.DB) {
 		var product model.Product
 		result := db.Preload("Category").First(&product, id)
 		if result.Error != nil {
-			return c.String(http.StatusNotFound, "Product not found")
+			return c.String(http.StatusNotFound, productNotFoundErrorMessage)
 		}
 		return c.JSON(http.StatusOK, product)
 	})
@@ -48,7 +50,7 @@ func registerProducts(e *echo.Echo, db *gorm.DB) {
 		}
 		result := db.Model(&product).Where("id = ?", id).Updates(product)
 		if result.Error != nil {
-			return c.String(http.StatusNotFound, "Product not found")
+			return c.String(http.StatusNotFound, productNotFoundErrorMessage)
 		}
 		return c.NoContent(http.StatusAccepted)
 	})
@@ -57,7 +59,7 @@ func registerProducts(e *echo.Echo, db *gorm.DB) {
 		id := c.Param("id")
 		result := db.Delete(&model.Product{}, id)
 		if result.RowsAffected == 0 {
-			return c.String(http.StatusNotFound, "Product not found")
+			return c.String(http.StatusNotFound, productNotFoundErrorMessage)
 		}
 		return c.NoContent(http.StatusAccepted)
 	})
