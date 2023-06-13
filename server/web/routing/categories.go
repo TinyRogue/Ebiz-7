@@ -8,14 +8,16 @@ import (
 	"net/http"
 )
 
+const categoriesEndpoint = "/categories"
+
 func registerCategories(e *echo.Echo, db *gorm.DB) {
-	e.GET("/categories", func(c echo.Context) error {
+	e.GET(categoriesEndpoint, func(c echo.Context) error {
 		var categories []model.Category
 		db.Find(&categories)
 		return c.JSON(http.StatusOK, categories)
 	})
 
-	e.GET("/categories/:id", func(c echo.Context) error {
+	e.GET(categoriesEndpoint+"/:id", func(c echo.Context) error {
 		id := c.Param("id")
 		var category model.Category
 		result := db.First(&category, id)
@@ -25,7 +27,7 @@ func registerCategories(e *echo.Echo, db *gorm.DB) {
 		return c.JSON(http.StatusOK, category)
 	})
 
-	e.POST("/categories", func(c echo.Context) error {
+	e.POST(categoriesEndpoint, func(c echo.Context) error {
 		var category model.Category
 		if err := json.NewDecoder(c.Request().Body).Decode(&category); err != nil {
 			return err
@@ -34,7 +36,7 @@ func registerCategories(e *echo.Echo, db *gorm.DB) {
 		return c.NoContent(http.StatusCreated)
 	})
 
-	e.PUT("/categories/:id", func(c echo.Context) error {
+	e.PUT(categoriesEndpoint+"/:id", func(c echo.Context) error {
 		id := c.Param("id")
 		var category model.Category
 		if err := json.NewDecoder(c.Request().Body).Decode(&category); err != nil {
@@ -47,7 +49,7 @@ func registerCategories(e *echo.Echo, db *gorm.DB) {
 		return c.NoContent(http.StatusAccepted)
 	})
 
-	e.DELETE("/categories/:id", func(c echo.Context) error {
+	e.DELETE(categoriesEndpoint+"/:id", func(c echo.Context) error {
 		id := c.Param("id")
 		result := db.Delete(&model.Category{}, id)
 		if result.RowsAffected == 0 {
